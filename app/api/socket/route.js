@@ -1,12 +1,14 @@
 import { Server } from 'socket.io';
 
+// Export dynamic configuration if needed
+export const dynamic = 'force-dynamic'; // Force dynamic route to avoid caching for real-time functionality
 
 export default function handler(req, res) {
   if (!res.socket.server.io) {
     const io = new Server(res.socket.server, {
-      path: '/api/socket', // Ensure correct path for socket connection
+      path: '/api/socket',
       cors: {
-        origin: '*',
+        origin: '*', // Adjust for production as needed
       },
     });
     res.socket.server.io = io;
@@ -21,6 +23,8 @@ export default function handler(req, res) {
 
       socket.on('chatMessage', ({ roomId, message }) => {
         io.to(roomId).emit('chatMessage', message);
+
+        // Remove message after 60 seconds
         setTimeout(() => {
           io.to(roomId).emit('deleteMessage', message);
         }, 60000);
@@ -30,6 +34,7 @@ export default function handler(req, res) {
         console.log('User disconnected:', socket.id);
       });
     });
+
     console.log('Socket.io server initialized');
   } else {
     console.log('Socket.io server already running');
