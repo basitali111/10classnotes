@@ -1,10 +1,5 @@
 import { Server } from 'socket.io';
 
-export const config = {
-  api: {
-    bodyParser: false, // Disable body parsing for WebSocket
-  },
-};
 
 export default function handler(req, res) {
   if (!res.socket.server.io) {
